@@ -130,7 +130,7 @@ class WidgetRestControllerTest {
                                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                                             .content(asJsonString(widgetUpdate))
                                             .header(HttpHeaders.IF_MATCH,"1"))
-                                            .andExpect(status().isOk());e
+                                            .andExpect(status().isOk());
     }
 
 
