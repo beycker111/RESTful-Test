@@ -107,30 +107,47 @@ class WidgetRestControllerTest {
     }
 
     @Test
+    @DisplayName("GET/widget/{id} - Success")
+    void testGetWidgetSuccess() throws Exception {
+
+        Optional<Widget> widgetGet = Optional.of(new Widget(1144L,"Name widget", "Description widget", 1));
+        doReturn(widgetGet).when(service).findById(1144L);
+
+        mockMvc.perform(get("/rest/widget/{id}",1144L))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(header().string(HttpHeaders.LOCATION, "/rest/widget/1144"))
+                    .andExpect(jsonPath("$.id", is(1144)))
+                    .andExpect(jsonPath("$.name", is("Name widget")))
+                    .andExpect(jsonPath("$.description", is("Description widget")))
+                    .andExpect(jsonPath("$.version", is(1)));
+    }
+
+    @Test
     @DisplayName("PUT /rest/widget/{id} - id isn't found")
     void testUpdateWidgetNoFound() throws  Exception{
         Widget widgetput = new Widget("New Widget","Create New Widget");
         doReturn(Optional.empty()).when(service).findById(1441l);
         mockMvc.perform(get("/rest/widget/{id}", 1144L)
-                        .header(HttpHeaders.IF_MATCH,"1")
-                        .content(asJsonString(widgetput))
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isNotFound());
+                    .header(HttpHeaders.IF_MATCH,"1")
+                    .content(asJsonString(widgetput))
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("PUT /rest/widget/1")
     void testUpdateWidget() throws Exception {
 
-        Optional<Widget> widgetUpdate = Optional.of(new Widget(1144l,"Nombre 2", "Descripcion 2", 1));
-        Widget widget = new Widget(1144l,"Nombre 2", "Descripcion 2", 1);
+        Optional<Widget> widgetUpdate = Optional.of(new Widget(1144l,"Name widget", "Description widget", 1));
+        Widget widget = new Widget(1144l,"Name widget", "Description widget", 1);
         doReturn(widgetUpdate).when(service).findById(1144L);
         doReturn(widget).when(service).save(any());
         var response = mockMvc.perform(put("/rest/widget/{id}",1144L)
-                                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                            .content(asJsonString(widgetUpdate))
-                                            .header(HttpHeaders.IF_MATCH,"1"))
-                                            .andExpect(status().isOk());e
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .content(asJsonString(widgetUpdate))
+                    .header(HttpHeaders.IF_MATCH,"1"))
+                    .andExpect(status().isOk());
     }
 
 
